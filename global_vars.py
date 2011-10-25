@@ -25,10 +25,6 @@ AUTH = (TOGGL["EMAIL"], TOGGL["PASSWORD"])
 # Task prompt
 PROMPT = "What are you working on?: "
 
-# Set the timezone
-os.environ['TZ'] = "GMT"
-time.tzset()
-
 # Get project settings from .toggl_project file
 PROJECT_FILE = open(os.path.join(cwd, ".toggl_project"), "r")
 settings = get_project_file_settings(PROJECT_FILE)

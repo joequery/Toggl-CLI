@@ -118,11 +118,13 @@ def new_time_entry(description):
 	# says they are finished timing the task. Get the time they stopped
 	# the timer, subtract it from the start_time, and store the difference
 	# in seconds as the duration.
-	start_time = datetime.datetime.now()
+	#start_time = datetime.datetime.now()
+	start_time = datetime.datetime.utcnow()
+	local_start_time = datetime.datetime.now()
 
 	# Let user know the timer has started, and wait for them to press
 	# Enter to stop it.
-	timer_start_print(description, start_time)
+	timer_start_print(description, local_start_time)
 
 	try:
 		raw_input()
@@ -131,7 +133,7 @@ def new_time_entry(description):
 
 	print "Sending data..."
 
-	end_time = datetime.datetime.now()
+	end_time = datetime.datetime.utcnow()
 	time_difference = (end_time - start_time).seconds
 
 
@@ -199,7 +201,7 @@ def timer_start_print(description, time):
 	if "CLIENT" in TOGGL.keys():
 		print "Client: " + TOGGL["CLIENT"]
 
-	print time.strftime("Started at: %I:%M%p GMT")
+	print time.strftime("Started at: %I:%M%p")
 	print dashes(PROMPT + description)
 	print "Press Enter to stop timer... (CTRL-C to cancel)"
 	
