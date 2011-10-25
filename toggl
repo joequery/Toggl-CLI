@@ -1,0 +1,25 @@
+#!/bin/bash
+# Initiate the toggl python script after declaring some env vars.
+
+export TOGGL_CALLDIR=${PWD##}
+cd $( dirname "$0" )
+
+if [ -f ~/.toggl ];
+then
+	source ~/.toggl
+else
+	printf "Must have a ~/.toggl file\n"
+	exit
+fi
+
+if [ ! -f $TOGGL_CALLDIR/.toggl_project ];
+then
+	printf "Must have a .toggl_project file in the "
+	printf "current working directory\n"
+	exit
+fi
+
+# Activate the virtual environment
+. env/bin/activate
+python toggl.py "$@"
+deactivate
