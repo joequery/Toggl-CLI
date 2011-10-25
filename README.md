@@ -17,7 +17,7 @@ You'll need [python2.6](http://www.python.org/getit/releases/2.6/), [virtualenv]
 		pip install -r requirements.txt
 		deactivate
 
-4. Make yourself a project with the Toggl web app. cd to an appropriate directory for working on that project, and create a .toggl_project file in the directory, similar to the toggl_project_example.txt file located in the repo. Place only the name of the project in the file.
+4. Make yourself a project with the Toggl web app. cd to an appropriate directory for working on that project, and create a .toggl_project file in the directory, similar to the toggl_project_example.txt file located in the repo.
 
 5. Now we're set! Make sure you're in your project directory with the .toggl_project file, and execute
 

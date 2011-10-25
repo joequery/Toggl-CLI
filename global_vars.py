@@ -2,34 +2,41 @@
 # Global/Environment Variables and Settings
 
 import os, time, getpass
+from functions import get_project_file_settings,print_dict
 
-# These environment variables are defined in ~/.toggl and are
+# Some environment variables are defined in ~/.toggl and are
 # put into the environment by the bash wrapper
+TOGGL = {}
 
 # Password may not be specified in file for security reasons.
 try:
-	TOGGL_PASSWORD = os.environ["TOGGL_PASSWORD"]
+	TOGGL["PASSWORD"] = os.environ["TOGGL_PASSWORD"]
 except KeyError:
-	TOGGL_PASSWORD = getpass.getpass("Your password: ")
+	TOGGL["PASSWORD"] = getpass.getpass("Your password: ")
 
-TOGGL_EMAIL = os.environ["TOGGL_EMAIL"]
+TOGGL["EMAIL"] = os.environ["TOGGL_EMAIL"]
 cwd = os.environ["TOGGL_CALLDIR"]
 
-# See if a .toggl_project file was specified. This file should just
-# have the project name.
-filePath = os.path.join(cwd, ".toggl_project")
-projectFile = open(filePath, "r")
-TOGGL_PROJECT = projectFile.read().strip()
 
-
+# API convenience vars
 API_PREFIX = "https://www.toggl.com/api/v6/"
-AUTH = (TOGGL_EMAIL, TOGGL_PASSWORD)
+AUTH = (TOGGL["EMAIL"], TOGGL["PASSWORD"])
 
+# Task prompt
 PROMPT = "What are you working on?: "
-'''
-Begin Settings
-'''
+
 # Set the timezone
 os.environ['TZ'] = "GMT"
 time.tzset()
 
+# Get project settings from .toggl_project file
+PROJECT_FILE = open(os.path.join(cwd, ".toggl_project"), "r")
+settings = get_project_file_settings(PROJECT_FILE)
+
+# Merge the settings dictionary with the TOGGL dictionary
+TOGGL = dict(TOGGL.items() + settings.items())
+
+# If project not specfied, inform user and exit
+if "PROJECT" not in TOGGL.keys():
+	print "A project must be specified. Exiting."
+	exit()

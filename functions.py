@@ -91,7 +91,8 @@ def get_latest_time_entries():
 	url = api("time_entries")
 	with session() as r:
 		content = r.get(url).content
-		#print simplejson.loads(content) 
+		jsonDict = simplejson.loads(content) 
+		return jsonDict
 
 def new_time_entry(description):
 	''' 
@@ -104,14 +105,10 @@ def new_time_entry(description):
 	# in seconds as the duration.
 	start_time = datetime.datetime.now()
 
-	# Let user know to press enter to stop timer, and output dashes
-	# for pretty formatting.
-	# Output dashes for pretty formatting
-	print ""
-	print "Task: " + description
-	print start_time.strftime("Started at: %I:%M%p GMT")
-	print dashes(PROMPT + description)
-	print "Press Enter to stop timer... (CTRL-C to cancel)"
+	# Let user know the timer has started, and wait for them to press
+	# Enter to stop it.
+	timer_start_print(description, start_time)
+
 	try:
 		raw_input()
 	except (KeyboardInterrupt, SystemExit):
@@ -122,7 +119,10 @@ def new_time_entry(description):
 
 	end_time = datetime.datetime.now()
 	time_difference = (end_time - start_time).seconds
-	projectID = get_data_dict("projects", "name", TOGGL_PROJECT)["id"]
+
+	# Get the project ID of the client/project pair specified in 
+	# .toggl_project
+	projectID = get_project()["id"]
 
 	# Data passed to the request
 	data = {"time_entry":{
@@ -151,6 +151,60 @@ def dashes(string):
 	'''
 	return "-" * len(string)
 
+def print_dict(theDict, indent=4):
+	'''
+	Outputs a dictionary all pretty like
+	'''
+	print simplejson.dumps(theDict, indent=indent)
+
+def get_project_file_settings(handle):
+	'''
+	Get the settings specified by the user in the .toggl_project file.
+	Handle is the already opened file handle. Returns a dictionary
+	'''
+	returnDict = {}
+	for line in handle:
+		li = line.strip()
+
+		# Ignore empty lines and comments
+		if li and not li.startswith("#"):
+
+			# Store the key value pair. Uppercase Key since it will be 
+			# used in a global variable
+			tmp = li.split(":")
+			key = tmp[0].strip().upper()
+			value = tmp[1].strip()
+			returnDict[key] = value
+	return returnDict
+
+def timer_start_print(description, time):
+	'''
+	Print a message to let the user know that the timer has started
+	and how to stop it
+	'''
+	print ""
+	print "Task: " + description
+	print "Project: " + TOGGL["PROJECT"]
+	if "CLIENT" in TOGGL.keys():
+		print "Client: " + TOGGL["CLIENT"]
+
+	print time.strftime("Started at: %I:%M%p GMT")
+	print dashes(PROMPT + description)
+	print "Press Enter to stop timer... (CTRL-C to cancel)"
+	
+def get_project():
+	'''
+	Get the dictionary of the project specified in the .toggl_project file.
+	Will attempt to account for missing TOGGL["CLIENT"] key
+	'''
+	if "CLIENT" in TOGGL.keys():
+		# It's stored Client - Project under the API
+		tmp = TOGGL["CLIENT"] +" - "+ TOGGL["PROJECT"]
+		project = get_data_dict("projects", "client_project_name", tmp)
+	else:
+		project = get_data_dict("projects", "name", TOGGL["PROJECT"])
+	
+	return project
 
 # Get the global variables and settings.
 from global_vars import *
