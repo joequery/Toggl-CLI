@@ -99,6 +99,21 @@ def new_time_entry(description):
 	Creates a new time entry. Pass in a description string.
 	'''
 
+	# Get the project ID of the client/project pair specified in 
+	# .toggl_project. Make sure it's valid now before they start the timer
+	# or they'll waste time in the event it's invalid
+	try:
+		projectID = get_project()["id"]
+	except TypeError:
+		if "CLIENT" in TOGGL.keys():
+			print "The project " + TOGGL["PROJECT"]+" under the client " +\
+			TOGGL["CLIENT"] + " was not found."
+		else:
+			print "The project " + TOGGL["PROJECT"] + " was not found"
+		exit("Exiting...")
+					
+
+
 	# Get the current time and store it. Then pause until the user
 	# says they are finished timing the task. Get the time they stopped
 	# the timer, subtract it from the start_time, and store the difference
@@ -112,17 +127,13 @@ def new_time_entry(description):
 	try:
 		raw_input()
 	except (KeyboardInterrupt, SystemExit):
-		print "\nTask cancelled. Exiting."
-		exit()
+		exit("Task cancelled. Exiting")
 
 	print "Sending data..."
 
 	end_time = datetime.datetime.now()
 	time_difference = (end_time - start_time).seconds
 
-	# Get the project ID of the client/project pair specified in 
-	# .toggl_project
-	projectID = get_project()["id"]
 
 	# Data passed to the request
 	data = {"time_entry":{
