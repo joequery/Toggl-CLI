@@ -9,7 +9,7 @@ Although time tracking is an essential workflow tool, taking the time to click t
 You'll need [python2.6](http://www.python.org/getit/releases/2.6/), [virtualenv](http://pypi.python.org/pypi/virtualenv), and [pip](http://pypi.python.org/pypi/pip) to complete the installation. Other 2.x versions of python will probably work, I just haven't tried them yet. After you install pip, do the following:
 
 1. Download and extract the repo to wherever you want, as long as the toggl bash script is in your PATH. 
-2. Rename and move "dottoggl.txt" to ~/.toggl, and edit the file to contain your account credentials. The script will ask you for your password at run time in the event you don't want to store your password in the file.
+2. Move .toggl to ~/.toggl, and edit the file to contain your account credentials. The script will ask you for your password at run time in the event you don't want to store your password in the file.
 3. cd to the location where you extracted the repo. Execute the following to install the required packages:
 
 		virtualenv env --python=python2.6
