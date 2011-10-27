@@ -5,18 +5,27 @@ Although time tracking is an essential workflow tool, taking the time to click t
 ## What is [Toggl](http://toggl.com)?
 [Toggl](http://toggl.com) is a time tracking app that I absolutely love to use. The interface is simple and the time reports are extremely useful. Toggl's API powers this script.
 
+## Installation and Configuration
+Toggl CLI requires [python](http://www.python.org/). After you install python, execute the following:
+
+		git clone git://github.com/joequery/Toggl-CLI.git
+		cd Toggl-CLI
+		sudo python setup.py install
+
+Now edit the ~/.toggl file created for you and fill it in with your
+credentials. Note that entering your password into this file is optional. If you don't, the script will request it at runtime. 
+
+
 ## Usage
-You'll need [python2.6](http://www.python.org/getit/releases/2.6/). Other 2.x versions of python will probably work, I just haven't tried them yet. After you install python, do the following:
+1. Create a new [Toggl Project](https://www.toggl.com/projects) via the web app.
+2. In the directory you plan on working in, create a .toggl_project file similar to the [toggl_project_example.txt file](https://github.com/joequery/Toggl-CLI/blob/master/toggl_project_example.txt). Specify a Project and optionally a Client in this file.
 
-1. Download and extract the repo to wherever you want, as long as the toggl script is in your PATH. 
-2. Move .toggl to ~/.toggl, and edit the file to contain your account credentials. The script will ask you for your password at run time in the event you don't want to store your password in the file.
-3. Make yourself a project with the Toggl web app. cd to an appropriate directory for working on that project, and create a .toggl_project file in the directory, similar to the toggl_project_example.txt file located in the repo.
+Now simply execute
+		toggl "Your current task"
 
-4. Now we're set! Make sure you're in your project directory with the .toggl_project file, and execute
+Pressing enter will stop the timer and send the time to Toggl. Pressing CTRL+C will cancel the timer and NOT send the time to Toggl. This is useful in the event you get distracted or forget your timer is running!
 
-		toggl "Your Task Description Here"
-
-Press enter when you want to stop your task timer. You can immediately go check your Toggl dashboard and see the entry.
+You can immediately go check your Toggl dashboard and see the entry.
 
 ## Technologies Used
 * [Requests](http://docs.python-requests.org/en/latest/index.html): HTTP for Humans
