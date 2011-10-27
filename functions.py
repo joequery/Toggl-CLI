@@ -170,21 +170,39 @@ def print_dict(theDict, indent=4):
 	'''
 	print simplejson.dumps(theDict, indent=indent)
 
-def get_project_file_settings(handle):
+def parse_file(fileLoc):
 	'''
-	Get the settings specified by the user in the .toggl_project file.
-	Handle is the already opened file handle. Returns a dictionary
+	Return a list containing the lines of the file.
+	Ignore commented lines (lines beginning with #)
+
+	fileLoc: location of the file as a string
 	'''
-	returnDict = {}
+	handle = open(fileLoc)
+
+	# We'll be returning this list.
+	returnList = []
+
 	for line in handle:
 		li = line.strip()
 
 		# Ignore empty lines and comments
 		if li and not li.startswith("#"):
+			returnList.append(li)
+	return returnList
 
+def get_settings_from_files(fileList):
+	'''
+	Get the settings specified by the user in the .toggl_project file.
+	fileList is a list of strings representing the locations for 
+	~/.toggl and the local .toggl_project file.
+	'''
+	returnDict = {}
+	for fileLoc in fileList:
+		fileContents = parse_file(fileLoc)
+		for line in fileContents:
 			# Store the key value pair. Uppercase Key since it will be 
 			# used in a global variable
-			tmp = li.split(":")
+			tmp = line.split(":")
 			key = tmp[0].strip().upper()
 			value = tmp[1].strip()
 			returnDict[key] = value

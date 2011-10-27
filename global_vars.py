@@ -15,7 +15,7 @@ except KeyError:
 	TOGGL["PASSWORD"] = getpass.getpass("Your password: ")
 
 TOGGL["EMAIL"] = os.environ["TOGGL_EMAIL"]
-cwd = os.environ["TOGGL_CALLDIR"]
+cwd = os.getcwd()
 
 
 # API convenience vars
@@ -26,7 +26,7 @@ AUTH = (TOGGL["EMAIL"], TOGGL["PASSWORD"])
 PROMPT = "What are you working on?: "
 
 # Get project settings from .toggl_project file
-PROJECT_FILE = open(os.path.join(cwd, ".toggl_project"), "r")
+PROJECT_FILE = os.path.join(cwd, ".toggl_project")
 settings = get_project_file_settings(PROJECT_FILE)
 
 # Merge the settings dictionary with the TOGGL dictionary
