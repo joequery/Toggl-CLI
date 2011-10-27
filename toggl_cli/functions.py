@@ -3,7 +3,12 @@
 
 # Note for myself: Use "http://httpbin.org/post" when needed for testing.
 
-import getpass, requests, simplejson, os, time, datetime
+import getpass, requests, os, time, datetime
+
+# Resolve simplejson discrepancy
+try: import simplejson
+except ImportError: import json as simplejson
+
 from urllib import urlencode
 
 def api(key, params=None):
