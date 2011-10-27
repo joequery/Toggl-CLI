@@ -1,8 +1,6 @@
-#!/bin/bash
 # Log in credentials for use with the Toggl command line client.
-
-export TOGGL_EMAIL=youremail@gmail.com
+Email: YourEmail@gmail.com
 
 # You don't have to specify your password here. If you don't, the 
 # program will request it at run time.
-# export TOGGL_PASSWORD=yourpassword
+# Password: YourPassword

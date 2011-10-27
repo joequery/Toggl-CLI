@@ -2,21 +2,36 @@
 # Global/Environment Variables and Settings
 
 import os, time, getpass
-from functions import get_project_file_settings,print_dict
+from functions import get_settings_from_file
 
-# Some environment variables are defined in ~/.toggl and are
-# put into the environment by the bash wrapper
+# Get project settings from ~/.toggl and local .toggl_project file
 TOGGL = {}
 
-# Password may not be specified in file for security reasons.
+'''
+The following criteria must be met before me proceed:
+	1. ~/.toggl must exist
+	2. a .toggl_project must exist in the directory the script is called.
+'''
+# 1. ~/.toggl must exist
 try:
-	TOGGL["PASSWORD"] = os.environ["TOGGL_PASSWORD"]
-except KeyError:
+	home = os.path.expanduser("~")
+	fileLoc = os.path.join(home, ".toggl")
+	get_settings_from_file(["EMAIL", "PASSWORD"], fileLoc, TOGGL)
+except IOError:
+	exit("Must have a ~/.toggl file...")
+
+# 2. a .toggl_project must exist in the directory the script is called.
+try:
+	projectFile = os.path.join(os.getcwd(), ".toggl_project")
+	get_settings_from_file(["CLIENT", "PROJECT"],projectFile, TOGGL)
+except IOError:
+	exit("Must have a .toggl_project file in this directory...")
+
+# User has the option of not specifying a password in the ~/.toggl file
+# for security concerns. If they didn't specify the password, ask for it
+# now.
+if "PASSWORD" not in TOGGL.keys():
 	TOGGL["PASSWORD"] = getpass.getpass("Your password: ")
-
-TOGGL["EMAIL"] = os.environ["TOGGL_EMAIL"]
-cwd = os.getcwd()
-
 
 # API convenience vars
 API_PREFIX = "https://www.toggl.com/api/v6/"
@@ -24,13 +39,6 @@ AUTH = (TOGGL["EMAIL"], TOGGL["PASSWORD"])
 
 # Task prompt
 PROMPT = "What are you working on?: "
-
-# Get project settings from .toggl_project file
-PROJECT_FILE = os.path.join(cwd, ".toggl_project")
-settings = get_project_file_settings(PROJECT_FILE)
-
-# Merge the settings dictionary with the TOGGL dictionary
-TOGGL = dict(TOGGL.items() + settings.items())
 
 # If project not specfied, inform user and exit
 if "PROJECT" not in TOGGL.keys():

@@ -1,25 +1,17 @@
-#!/bin/bash
-# Initiate the toggl python script after declaring some env vars.
+#!/usr/bin/python
 
-export TOGGL_CALLDIR=${PWD##}
-cd $( dirname "$0" )
+# Author: Joseph McCullough (@joe_query, joseph@vertstudios.com)
+# Command line interface for interacting with Toggl, using the official
+# Toggl API. (https://www.toggl.com/public/api)
+# end.
+from functions import *
+import sys, os
 
-if [ -f ~/.toggl ];
-then
-	source ~/.toggl
-else
-	printf "Must have a ~/.toggl file\n"
-	exit
-fi
+# Allow the user to call this script through 'toggl "Decription Here"'
+# or just toggl and specify it via prompt.
+if len(sys.argv) > 1:
+	description = sys.argv[1]
+else:
+	description = raw_input(PROMPT)
 
-if [ ! -f $TOGGL_CALLDIR/.toggl_project ];
-then
-	printf "Must have a .toggl_project file in the "
-	printf "current working directory\n"
-	exit
-fi
-
-# Activate the virtual environment
-. env/bin/activate
-python toggl.py "$@"
-deactivate
+#new_time_entry(description)

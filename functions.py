@@ -56,8 +56,12 @@ def get_data(key, params=None, data=None):
 			response = r.get(api(key), data=data)
 
 		content = response.content
-		json = simplejson.loads(content)
-		return json
+		if response.ok:
+			json = simplejson.loads(content)
+			return json
+		else:
+			exit("Please verify your login credentials...")
+
 
 
 def get_data_dict(apikey, datakey, dataValue):
@@ -190,23 +194,24 @@ def parse_file(fileLoc):
 			returnList.append(li)
 	return returnList
 
-def get_settings_from_files(fileList):
+def get_settings_from_file(keyList, fileLoc, theDict):
 	'''
-	Get the settings specified by the user in the .toggl_project file.
-	fileList is a list of strings representing the locations for 
-	~/.toggl and the local .toggl_project file.
+	parses file at fileLoc and searches for key:value pairs specified
+	by keyList.
+
+	Alters theDict dictionary 
 	'''
-	returnDict = {}
-	for fileLoc in fileList:
-		fileContents = parse_file(fileLoc)
-		for line in fileContents:
-			# Store the key value pair. Uppercase Key since it will be 
-			# used in a global variable
-			tmp = line.split(":")
-			key = tmp[0].strip().upper()
+	fileContents = parse_file(fileLoc)
+	for line in fileContents:
+		# Store the key value pair. Uppercase Key since it will be 
+		# used in a global variable
+		tmp = line.split(":")
+		key = tmp[0].strip().upper()
+
+		# Only append the key value pair if the key is found.
+		if key in keyList:
 			value = tmp[1].strip()
-			returnDict[key] = value
-	return returnDict
+			theDict[key] = value
 
 def timer_start_print(description, time):
 	'''
