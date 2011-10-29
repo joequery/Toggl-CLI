@@ -93,15 +93,47 @@ def test_api(key, params=None, data=None):
 	print simplejson.dumps(get_data(key, params, data), indent=2)
 
 
-def get_latest_time_entries():
+def get_recent_time_entries():
 	'''
-	Gets the latest time entries. Returns a dictionary
+	Gets the latest time entries. Returns a list of dictionaries
 	'''
-	url = api("time_entries")
-	with session() as r:
-		content = r.get(url).content
-		jsonDict = simplejson.loads(content) 
-		return jsonDict
+	recent = [] # We'll be returning this
+	numEntries = 10 # How many entries we plan on returning
+	entries = get_data("time_entries")
+
+	for x in entries:
+		tmpDict = {}
+		tmpDict["description"] = x["description"]
+		tmpDict["project"] = x["project"]
+		if tmpDict not in recent:
+			recent.append(tmpDict)
+
+	recent.reverse()
+	return recent
+		
+def print_recent_time_entries(numToPrint=10):
+	'''
+	Prints the recent time entries. Whoda guessed? ;)
+	numToPrint: Number of entries to print
+	'''
+
+	# Ew, a bunch of string formatting
+	strLength = 40 
+	entries = get_recent_time_entries()
+	counter = 1
+	maxCounterLen = len(str(numToPrint)) + 2
+	width = str(strLength + maxCounterLen)
+	fmtString = "{0:<%s}{1:<%s}{2:>10}" % (maxCounterLen, width)
+
+	for x in entries[0:numToPrint]:
+		counterLen = len(str(counter))
+		d = x["description"].strip()
+		if len(d) >= strLength - 3:
+			d = d[0:strLength-3] + "..."
+
+		p = x["project"]["client_project_name"]
+		print fmtString.format(str(counter) + ".", d, p)
+		counter += 1
 
 def new_time_entry(description):
 	''' 
