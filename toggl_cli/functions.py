@@ -82,7 +82,7 @@ def get_data_dict(apikey, datakey, dataValue):
 	# return it. If not, return false.
 	
 	for x in data:
-		if x[datakey].lower() == dataValue.lower():
+		if str(x[datakey]).lower() == str(dataValue).lower():
 			return x
 	return False
 
