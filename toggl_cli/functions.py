@@ -228,7 +228,6 @@ def new_time_entry(description, taskID=False):
 	data = {"time_entry" : data }
 
 
-	print data
 	send_data("time_entries", data=data)
 	print "Success."
 
