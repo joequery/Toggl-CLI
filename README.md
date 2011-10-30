@@ -21,9 +21,11 @@ credentials. Note that entering your password into this file is optional. If you
 2. In the directory you plan on working in, create a .toggl_project file similar to the [toggl_project_example.txt file](https://github.com/joequery/Toggl-CLI/blob/master/toggl_project_example.txt). Specify a Project and optionally a Client in this file.
 
 Now simply execute
-		toggl "Your current task"
+		toggl
 
-Pressing enter will stop the timer and send the time to Toggl. Pressing CTRL+C will cancel the timer and NOT send the time to Toggl. This is useful in the event you get distracted or forget your timer is running!
+You will be prompted with a menu. You can continue a recent task, continue a recent time entry, or start a completely new time entry with your own description.
+
+After you make your selections from the menu, pressing enter will stop the timer and send the time to Toggl. Pressing CTRL+C will cancel the timer and NOT send the time to Toggl. This is useful in the event you get distracted or forget your timer is running!
 
 You can immediately go check your Toggl dashboard and see the entry.
 

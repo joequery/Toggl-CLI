@@ -7,11 +7,64 @@
 from toggl_cli.functions import *
 import sys, os
 
-# Allow the user to call this script through 'toggl "Decription Here"'
-# or just toggl and specify it via prompt.
-if len(sys.argv) > 1:
-	description = sys.argv[1]
-else:
-	description = raw_input(PROMPT)
+menuStr = '''
+======================
+Toggl CLI
+======================
+1. Continue recent task
+2. Continue recent time entry
+3. New time entry
+4. Exit
+'''
 
-new_time_entry(description)
+def get_selection():
+	# Get the description based on user input
+	sys.stdout.write("Your selection: ")
+
+	try:
+		return int(getkey())  - 1
+	except ValueError:
+		exit("Invalid selection. Exiting...")
+
+print menuStr
+response = get_selection() + 1
+print response
+
+# Continue recent task
+if response == 1:
+	print "Getting recent Tasks..."
+	entries = get_recent("tasks", ["name", "project", "id"])
+	print "Press the number of the Task you wish to continue..."
+	print_entries(entries, "name")
+
+	# Get selection and print for confirmation
+	selection = get_selection()
+	print selection + 1
+
+	description = entries[selection]["name"]
+	taskID = entries[selection]["id"]
+	new_time_entry(description, taskID)
+
+
+# Continue recent time entry
+elif response == 2:
+	print "Getting recent Time Entries..."
+	entries = get_recent("time_entries", ["description", "project", "id"])
+	print "Press the number of the Time Entry you wish to continue..."
+	print_entries(entries, "description")
+
+	# Get selection and print for confirmation
+	selection = get_selection()
+	print selection + 1
+
+	description = entries[selection]["description"]
+	new_time_entry(description)
+
+# New time entry
+elif response == 3:
+	description = raw_input("\nWhat will you be working on?: ")
+	new_time_entry(description)
+# Exit
+else:
+	exit("Exiting...")
+

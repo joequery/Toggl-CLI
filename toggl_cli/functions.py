@@ -3,7 +3,7 @@
 
 # Note for myself: Use "http://httpbin.org/post" when needed for testing.
 
-import getpass, requests, os, time, datetime
+import getpass, requests, os, time, datetime, sys, select, termios, tty
 
 # Resolve simplejson discrepancy
 try: import simplejson
@@ -117,7 +117,7 @@ def test_api(key):
 	print_dict(get_data(key), indent=2)
 
 
-def get_recent(apikey, keyList, numEntries=10):
+def get_recent(apikey, keyList, numEntries=9):
 	'''
 	Gets the latest instances of apikey that corresponds to the current
 	project. 
@@ -151,11 +151,11 @@ def print_entries(entries, description, numToPrint=10):
 	'''
 
 	# Ew, a bunch of string formatting
-	strLength = 40 
+	strLength = 60 
 	counter = 1
 	maxCounterLen = len(str(numToPrint)) + 2
 	width = str(strLength + maxCounterLen)
-	fmtString = "{0:<%s}{1:<%s}{2:>10}" % (maxCounterLen, width)
+	fmtString = "{0:<%s}{1:<%s}" % (maxCounterLen, width)
 
 	for x in entries[0:numToPrint]:
 		counterLen = len(str(counter))
@@ -164,12 +164,13 @@ def print_entries(entries, description, numToPrint=10):
 			d = d[0:strLength-3] + "..."
 
 		p = x["project"]["client_project_name"]
-		print fmtString.format(str(counter) + ".", d, p)
+		print fmtString.format(str(counter) + ".", d)
 		counter += 1
 
-def new_time_entry(description):
+def new_time_entry(description, taskID=False):
 	''' 
 	Creates a new time entry. Pass in a description string.
+	If this is a task (the PRO feature), set task to True. 
 	'''
 
 	# Get the project ID of the client/project pair specified in 
@@ -211,14 +212,23 @@ def new_time_entry(description):
 
 
 	# Data passed to the request
-	data = {"time_entry":{
+	data = {
 			"duration": time_difference,
 			"start": start_time.isoformat(),
 			"stop": "null",
 			"created_with": "Python Command Line Client",
 			"project": {"id":projectID},
-			"description": description}}
+			"description": description}
 
+	# If task Id was specified, add it to the data dict
+	if taskID:
+		data["task"] = {"id":taskID}
+
+	# Add to time_entry key
+	data = {"time_entry" : data }
+
+
+	print data
 	send_data("time_entries", data=data)
 	print "Success."
 
@@ -279,7 +289,12 @@ def timer_start_print(description, time):
 	Print a message to let the user know that the timer has started
 	and how to stop it
 	'''
-	print ""
+	
+	print "=" * 50
+	print "Timer started!"
+	print "=" * 50
+	print "\n\n"
+
 	print "Task: " + description
 	print "Project: " + TOGGL["PROJECT"]
 	if "CLIENT" in TOGGL.keys():
@@ -313,6 +328,17 @@ def get_project(small=False):
 				"client_project_name": project["client_project_name"]}
 	else:
 		return project
+
+def getkey():
+	'''
+	Get keystroke without having to press enter. *NIX only
+	'''
+	old_settings = termios.tcgetattr(sys.stdin)
+	tty.setraw(sys.stdin.fileno())
+	select.select([sys.stdin], [], [], 0)
+	answer = sys.stdin.read(1)
+	termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+	return answer
 
 # Get the global variables and settings.
 from global_vars import *
