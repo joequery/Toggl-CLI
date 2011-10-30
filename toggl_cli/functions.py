@@ -290,10 +290,10 @@ def timer_start_print(description, time):
 	and how to stop it
 	'''
 	
+	print "\n"
 	print "=" * 50
 	print "Timer started!"
 	print "=" * 50
-	print "\n\n"
 
 	print "Task: " + description
 	print "Project: " + TOGGL["PROJECT"]
