@@ -56,8 +56,11 @@ def get_data(key):
 
 		content = response.content
 		if response.ok:
-			json = simplejson.loads(content)
-			return json["data"]
+			json = simplejson.loads(content)["data"]
+
+			# Reverse the list to get correct chronological order
+			json.reverse()
+			return json
 		else:
 			exit("Please verify your login credentials...")
 
@@ -107,41 +110,48 @@ def get_data_where(api, dataPair):
 			returnList.append(x)
 	return returnList
 
-def test_api(key, params=None, data=None):
+def test_api(key):
 	'''
 	Output API info. Output wrapper for get_data
 	'''
-	print_dict(get_data(key, params, data), indent=2)
+	print_dict(get_data(key), indent=2)
 
 
-def get_recent_time_entries():
+def get_recent(apikey, keyList, numEntries=10):
 	'''
-	Gets the latest time entries. Returns a list of dictionaries
+	Gets the latest instances of apikey that corresponds to the current
+	project. 
+
+	keyList: List of keys you want to extract from the api call. 
+	numEntries: Number of entries to get.
+
+	ex: get_recent("time_entries") returns recent time entries 
+	for the project.
+
 	'''
 	recent = [] # We'll be returning this
-	numEntries = 10 # How many entries we plan on returning
 	project = get_project(small=True)
-	entries = get_data_where("time_entries", {"project":project})
+	entries = get_data_where(apikey, {"project":project})
 
 	for x in entries:
 		tmpDict = {}
-		tmpDict["description"] = x["description"]
-		tmpDict["project"] = x["project"]
+		for k in keyList:
+			tmpDict[k] = x[k]
+
+		# Avoid duplicates
 		if tmpDict not in recent:
 			recent.append(tmpDict)
 
-	recent.reverse()
-	return recent
+	return recent[0:numEntries]
 		
-def print_recent_time_entries(numToPrint=10):
+def print_entries(entries, description, numToPrint=10):
 	'''
-	Prints the recent time entries. Whoda guessed? ;)
-	numToPrint: Number of entries to print
+	Pretty print entries. Since some api calls have the description as 
+	"description" and others have it as "name", we'll need to specify it
 	'''
 
 	# Ew, a bunch of string formatting
 	strLength = 40 
-	entries = get_recent_time_entries()
 	counter = 1
 	maxCounterLen = len(str(numToPrint)) + 2
 	width = str(strLength + maxCounterLen)
@@ -149,7 +159,7 @@ def print_recent_time_entries(numToPrint=10):
 
 	for x in entries[0:numToPrint]:
 		counterLen = len(str(counter))
-		d = x["description"].strip()
+		d = x[description].strip()
 		if len(d) >= strLength - 3:
 			d = d[0:strLength-3] + "..."
 
