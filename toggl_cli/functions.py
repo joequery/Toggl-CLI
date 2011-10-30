@@ -45,20 +45,14 @@ def session(headers=None):
 		return requests.session(auth=AUTH)
 
 
-def get_data(key, params=None, data=None):
+def get_data(key):
 	'''
 	Get data from API. See list of keys in the api function in
 	this document.
-
-	params: A dictionary that will be urlencoded
-
-	Returns a dictionary.
+	
 	'''
 	with session() as r:
-		if params:
-			response = r.get(api(key, params), data=data)
-		else:
-			response = r.get(api(key), data=data)
+		response = r.get(api(key))
 
 		content = response.content
 		if response.ok:
@@ -67,6 +61,27 @@ def get_data(key, params=None, data=None):
 		else:
 			exit("Please verify your login credentials...")
 
+def send_data(key, params=None, data=None):
+	'''
+	Use the api to send data.
+
+	params: A dictionary that will be urlencoded
+
+	Returns a dictionary.
+	'''
+	headers = {"Content-Type": "application/json"}
+
+	# JSON Encode the data dict
+	data=simplejson.dumps(data)
+	with session(headers=headers) as r:
+		response = r.post(api(key), data=data)
+
+		content = response.content
+		if response.ok:
+			json = simplejson.loads(content)
+			return json["data"]
+		else:
+			exit("Please verify your login credentials...")
 
 
 def get_data_dict(apikey, datakey, dataValue):
@@ -186,17 +201,9 @@ def new_time_entry(description):
 			"created_with": "Python Command Line Client",
 			"project": {"id":projectID},
 			"description": description}}
-	url = api("time_entries")
-	#url = "http://httpbin.org/post"
 
-	headers = {"Content-Type": "application/json"}
-
-	# JSON Encode the data dict
-	data=simplejson.dumps(data)
-	with session(headers=headers) as r:
-		response = r.post(url, data=data)
-		#print response.content
-		print "Success."
+	send_data("time_entries", data=data)
+	print "Success."
 
 def dashes(string):
 	'''
