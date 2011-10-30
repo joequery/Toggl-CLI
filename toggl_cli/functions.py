@@ -84,20 +84,25 @@ def send_data(key, params=None, data=None):
 			exit("Please verify your login credentials...")
 
 
-def get_data_dict(apikey, datakey, dataValue):
+def get_data_where(api, dataPair):
 	'''
 	Output the dicionary of a specific datakey (such as 'name') with a
 	value (such as 'My Weekend Project' for a given apikey 
 	(such as 'projects')
 	'''
-	data = get_data(apikey)
+	data = get_data(api)
 	dump = simplejson.dumps(data, indent=2)
+
+	# Change data type so we can iterate
+	dataPair = dataPair.items()[0]
+
+	print dataPair
 
 	# Data is an array of dicts. See if we find our datakey. If so,
 	# return it. If not, return false.
 	
 	for x in data:
-		if str(x[datakey]).lower() == str(dataValue).lower():
+		if dataPair in x.items():
 			return x
 	return False
 
@@ -283,9 +288,9 @@ def get_project(small=False):
 	if "CLIENT" in TOGGL.keys():
 		# It's stored Client - Project under the API
 		tmp = TOGGL["CLIENT"] +" - "+ TOGGL["PROJECT"]
-		project = get_data_dict("projects", "client_project_name", tmp)
+		project = get_data_where("projects", {"client_project_name":tmp})
 	else:
-		project = get_data_dict("projects", "name", TOGGL["PROJECT"])
+		project = get_data_where("projects", {"name":TOGGL["PROJECT"]})
 	
 	if small:
 		return {"id":project["id"], 
