@@ -300,7 +300,7 @@ def timer_start_print(description, time):
 		print "Client: " + TOGGL["CLIENT"]
 
 	print time.strftime("Started at: %I:%M%p")
-	print dashes(PROMPT + description)
+	print dashes(description)
 	print "Press Enter to stop timer... (CTRL-C to cancel)"
 	
 def get_project(small=False):
