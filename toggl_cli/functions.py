@@ -90,7 +90,7 @@ def test_api(key, params=None, data=None):
 	'''
 	Output API info. Output wrapper for get_data
 	'''
-	print simplejson.dumps(get_data(key, params, data), indent=2)
+	print_dict(get_data(key, params, data), indent=2)
 
 
 def get_recent_time_entries():
@@ -265,10 +265,13 @@ def timer_start_print(description, time):
 	print dashes(PROMPT + description)
 	print "Press Enter to stop timer... (CTRL-C to cancel)"
 	
-def get_project():
+def get_project(small=False):
 	'''
 	Get the dictionary of the project specified in the .toggl_project file.
 	Will attempt to account for missing TOGGL["CLIENT"] key
+
+	small as True returns a project dict containing only id, name,
+	and client_project_name. Useful for passing as a parameter
 	'''
 	if "CLIENT" in TOGGL.keys():
 		# It's stored Client - Project under the API
@@ -277,7 +280,12 @@ def get_project():
 	else:
 		project = get_data_dict("projects", "name", TOGGL["PROJECT"])
 	
-	return project
+	if small:
+		return {"id":project["id"], 
+				"name":project["name"], 
+				"client_project_name": project["client_project_name"]}
+	else:
+		return project
 
 # Get the global variables and settings.
 from global_vars import *
