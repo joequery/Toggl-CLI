@@ -93,18 +93,19 @@ def get_data_where(api, dataPair):
 	data = get_data(api)
 	dump = simplejson.dumps(data, indent=2)
 
+	# We'll append to this list and return it
+	returnList = []
+
 	# Change data type so we can iterate
 	dataPair = dataPair.items()[0]
-
-	print dataPair
 
 	# Data is an array of dicts. See if we find our datakey. If so,
 	# return it. If not, return false.
 	
 	for x in data:
 		if dataPair in x.items():
-			return x
-	return False
+			returnList.append(x)
+	return returnList
 
 def test_api(key, params=None, data=None):
 	'''
@@ -119,7 +120,8 @@ def get_recent_time_entries():
 	'''
 	recent = [] # We'll be returning this
 	numEntries = 10 # How many entries we plan on returning
-	entries = get_data("time_entries")
+	project = get_project(small=True)
+	entries = get_data_where("time_entries", {"project":project})
 
 	for x in entries:
 		tmpDict = {}
@@ -291,6 +293,9 @@ def get_project(small=False):
 		project = get_data_where("projects", {"client_project_name":tmp})
 	else:
 		project = get_data_where("projects", {"name":TOGGL["PROJECT"]})
+	
+	# Should only be one response
+	project = project[0]
 	
 	if small:
 		return {"id":project["id"], 
