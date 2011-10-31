@@ -4,6 +4,7 @@
 # Note for myself: Use "http://httpbin.org/post" when needed for testing.
 
 import getpass, requests, os, time, datetime, sys, select, termios, tty
+from itertools import groupby
 
 # Resolve simplejson discrepancy
 try: import simplejson
@@ -58,7 +59,8 @@ def get_data(key):
 		if response.ok:
 			json = simplejson.loads(content)["data"]
 
-			# Reverse the list to get correct chronological order
+			# Reverse the list to get correct chronological order. Also,
+			# remove duplicates.
 			json.reverse()
 			return json
 		else:
@@ -129,19 +131,11 @@ def get_recent(apikey, keyList, numEntries=9):
 	for the project.
 
 	'''
-	recent = [] # We'll be returning this
 	project = get_project(small=True)
 	entries = get_data_where(apikey, {"project":project})
 
-	for x in entries:
-		tmpDict = {}
-		for k in keyList:
-			tmpDict[k] = x[k]
-
-		# Avoid duplicates
-		if tmpDict not in recent:
-			recent.append(tmpDict)
-
+	# Remove duplicates
+	recent = remove_dups(entries, "description")
 	return recent[0:numEntries]
 		
 def print_entries(entries, description, numToPrint=10):
@@ -338,6 +332,18 @@ def getkey():
 	answer = sys.stdin.read(1)
 	termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
 	return answer
+
+def remove_dups(theList, key):
+	'''
+	pass in a list of dictionaries theList and get back theList without
+	duplicates
+
+	See stackoverflow: http://bit.ly/tmwTIm 
+	'''
+	keyfunc = lambda d: (d[key])
+	giter = groupby(sorted(theList, key=keyfunc), keyfunc)
+
+	return [g[1].next() for g in giter]
 
 # Get the global variables and settings.
 from global_vars import *
