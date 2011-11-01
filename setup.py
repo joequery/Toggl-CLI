@@ -11,6 +11,13 @@ setup(name='Toggl CLI',
       scripts=['toggl']
      )
 
-# Copy .toggl to ~/.toggl
+# Copy .toggl to ~/.toggl if the file doesn't exist.
 home = os.path.expanduser("~")
-shutil.copy( ".toggl", os.path.join(home, ".toggl") )
+togglFile = os.path.join(home, ".toggl")
+
+try:
+	open(togglFile)
+	print "~/.toggl file found."
+except IOError:
+	print "Creating ~/.toggl file..."
+	shutil.copy( ".toggl", os.path.join(home, ".toggl") )
