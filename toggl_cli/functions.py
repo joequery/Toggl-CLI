@@ -60,8 +60,9 @@ def get_data(key):
 			json = simplejson.loads(content)["data"]
 
 			# Reverse the list to get correct chronological order. Also,
-			# remove duplicates.
-			json.reverse()
+			# remove duplicates. But make sure this is actually a list!
+			if type(json) is list:
+				json.reverse()
 			return json
 		else:
 			exit("Please verify your login credentials...")
