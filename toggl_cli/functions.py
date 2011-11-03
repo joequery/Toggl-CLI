@@ -136,7 +136,11 @@ def get_recent(apikey, keyList, numEntries=9):
 	entries = get_data_where(apikey, {"project":project})
 
 	# Remove duplicates
-	recent = remove_dups(entries, "description")
+
+	if apikey == "tasks":
+		recent = remove_dups(entries, "name")
+	else:
+		recent = remove_dups(entries, "description")
 	return recent[0:numEntries]
 		
 def print_entries(entries, description, numToPrint=10):
