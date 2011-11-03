@@ -202,7 +202,9 @@ def new_time_entry(description, taskID=False):
 	try:
 		raw_input()
 	except (KeyboardInterrupt, SystemExit):
-		exit("Task cancelled. Exiting")
+		# Break out of main While loop, go back to menu.
+		print "\nTimer cancelled. Returning to main menu...\n"
+		return
 
 	print "Sending data..."
 
