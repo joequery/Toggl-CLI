@@ -1,6 +1,15 @@
+# Toggl CLI Settings. You can specify the following settings:
+# Email
+# Password
+# Client
+# Project.
+#
+# These will be your default settings, and can be overwritten with a 
+# ~/.toggl_project in the working directory.
+
 # Log in credentials for use with the Toggl command line client.
 Email: YourEmail@gmail.com
 
 # You don't have to specify your password here. If you don't, the 
 # program will request it at run time.
-# Password: YourPassword
+Password: YourPassword

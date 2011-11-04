@@ -265,10 +265,9 @@ def parse_file(fileLoc):
 			returnList.append(li)
 	return returnList
 
-def get_settings_from_file(keyList, fileLoc, theDict):
+def get_settings_from_file(fileLoc, theDict):
 	'''
-	parses file at fileLoc and searches for key:value pairs specified
-	by keyList.
+	parses file at fileLoc and searches for key:value pairs 
 
 	Alters theDict dictionary 
 	'''
@@ -278,11 +277,8 @@ def get_settings_from_file(keyList, fileLoc, theDict):
 		# used in a global variable
 		tmp = line.split(":")
 		key = tmp[0].strip().upper()
-
-		# Only append the key value pair if the key is found.
-		if key in keyList:
-			value = tmp[1].strip()
-			theDict[key] = value
+		value = tmp[1].strip()
+		theDict[key] = value
 
 def timer_start_print(description, time):
 	'''

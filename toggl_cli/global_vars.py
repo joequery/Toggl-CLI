@@ -16,14 +16,15 @@ The following criteria must be met before me proceed:
 try:
 	home = os.path.expanduser("~")
 	fileLoc = os.path.join(home, ".toggl")
-	get_settings_from_file(["EMAIL", "PASSWORD"], fileLoc, TOGGL)
+	get_settings_from_file(fileLoc, TOGGL)
 except IOError:
 	exit("Must have a ~/.toggl file...")
 
 # 2. a .toggl_project must exist in the directory the script is called.
+# This file can also overwrite any of the settings in ~/.toggl
 try:
 	projectFile = os.path.join(os.getcwd(), ".toggl_project")
-	get_settings_from_file(["CLIENT", "PROJECT"],projectFile, TOGGL)
+	get_settings_from_file(projectFile, TOGGL)
 except IOError:
 	exit("Must have a .toggl_project file in this directory...")
 
