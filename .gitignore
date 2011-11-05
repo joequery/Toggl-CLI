@@ -2,4 +2,3 @@ build/*
 *egg-info/*
 dist/*
 *.pyc
-lab/*
