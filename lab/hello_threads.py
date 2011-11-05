@@ -13,3 +13,6 @@ for i in range(2):
   t.start()
 
 run_timer()
+
+# I need to read this to learn about multithreaded programming:
+# http://www.tutorialspoint.com/python/python_multithreading.htm
