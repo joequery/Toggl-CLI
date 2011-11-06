@@ -2,6 +2,8 @@ import threading
 import datetime
 from timer import run_timer
 
+EXIT_FLAG = 0
+
 class ThreadClass(threading.Thread):
   def run(self):
 	now = datetime.datetime.now()
